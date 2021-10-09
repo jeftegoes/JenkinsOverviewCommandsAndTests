@@ -5,6 +5,39 @@
 ## Plugins 
 - Mailer plugin
 - Job DSL https://plugins.jenkins.io/job-dsl/
+  - Example of DSL script for create job
+    ```
+    job('job_dsl_created') {
+      description('This is my awesome Job')
+
+      parameters {
+        stringParam('Planet', defaultValue = 'word', description = 'This is the world')
+        booleanParam('FLAG', true)
+        choiceParam('OPTION', ['option 1 (default)', 'option 2', 'option 3'])
+      }
+
+      scm {
+        git('https://github.com/jenkins-docs/simple-java-maven-app.git', 'master')
+        /*git('https://github.com/jenkins-docs/simple-java-maven-app.git', 'master',{node -> node / 'extensions' << '' }) to Jenkins disable tag every build in dsl*/
+      }
+
+      triggers {
+        cron('H 5 * * 7')
+      }
+
+      steps {
+        shell("echo 'Hello world'")
+        shell("""
+                echo 'Hello world with multiple lines'
+                echo 'Running script'
+              """)
+      }
+
+      publishers {
+        mailer('jefte.goes@example.com', true, true)
+      }
+    }
+    ```
 - Git client plugin
 - Git plugin
 - GitHub API
@@ -20,49 +53,24 @@
 - Full name: Jenkins Admin
 - jenkins@jenkins.com
 
+## Tips & tricks
+### Example global enviroment variables in Jenkins (Execute shell)
+  ```
+  echo "BUILD NUMBER FOR THIS IS $BUILD_NUMBER"
+  echo "BUILD ID IS $BUILD_ID"
+  echo "BUILD URL IS $BUILD_URL"
+  echo "JOB NAME IS $JOB_NAME"
+  ```
+### Example custom enviroment variables in Jenkins (Execute shell)
+- To enable > Manage Jenkins > Configure System > Global properties > Mark option Environment variables
+  ```
+  echo "THE NAME OF ADMINISTRATOR IS $NAME_OF_THE_ADMINISTRATOR"
+  echo "THE COUNTRY OF SERVER INSTALLED IS $COUNTRY"
+  ```
 
-## DSL
-- Example of DSL script for create job
-  ```
-  job('job_dsl_created') {
-    
-  }
-  ```
-- Create job with description
-  ```
-  job('job_dsl_created') {
-    description('This is my awesome Job')
-  }
-  ```
-- Create job with parameters
-  ```
-  job('job_dsl_created') {
-    description('This is my awesome Job')
+### Jenkins cron (Schedules) https://crontab.guru/
+- Example every 1 minute: `* * * * *`
 
-    parameters {
-      stringParam('Planet', defaultValue = 'word', description = 'This is the world')
-      booleanParam('FLAG', true)
-      choiceParam('OPTION', ['option 1 (default)', 'option 2', 'option 3'])
-    }
-  }
-  ```
-- Create job with SCM (Source Code Management)
-  ```
-  job('job_dsl_created') {
-    description('This is my awesome Job')
-
-    parameters {
-      stringParam('Planet', defaultValue = 'word', description = 'This is the world')
-      booleanParam('FLAG', true)
-      choiceParam('OPTION', ['option 1 (default)', 'option 2', 'option 3'])
-    }
-
-    scm {
-      git('https://github.com/jenkins-docs/simple-java-maven-app.git', 'master')
-      /*git('https://github.com/jenkins-docs/simple-java-maven-app.git', '*/master',{node -> node / 'extensions' << '' }) to Jenkins disable tag every build in dsl*/
-    }
-  }
-  ```
 
 ## Docker compose
 ```
