@@ -42,6 +42,146 @@
 - Git plugin
 - GitHub API
 - GitHub plugin
+- Pipeline
+  - Example of script **declarative** pipeline
+    ```
+    pipeline {
+        agent any 
+        stages {
+            stage('Build') { 
+                steps {
+                    echo "Building..."
+                }
+            }
+            stage('Test') { 
+                steps {
+                    echo "Testing..."
+                }
+            }
+            stage('Deploy') { 
+                steps {
+                    echo "Deploying..."
+                }
+            }
+        }
+    }
+    ```
+  - Example of script with `sh` command
+    ```
+    pipeline {
+        agent any 
+        stages {
+            stage('Build') { 
+                steps {
+                    sh 'echo "My first pipeline"'
+                    sh '''
+                        echo "By the way, I can do more stuff in here"
+                        ls -lah
+                    '''
+                }
+            }
+        }
+    }
+    ```
+  - Example of script with **retry** command, in this example the jekins will display error three times, because missing `echo` command 
+    ```
+    pipeline {
+        agent any 
+        stages {
+            stage('Timeout') { 
+                steps {
+                    retry(3) {
+                        sh 'I am not going to work :c'    
+                    }
+                }
+            }
+        }
+    }
+    ```
+  - Example of script with **timeout**, in this example the jekins will display error, because timeout has been exceeded
+    ```
+    pipeline {
+        agent any 
+        stages {
+            stage('Timeout') { 
+                steps {
+                    retry(3) {
+                        sh 'echo hello'    
+                    }
+                    
+                    timeout(time: 3, unit: 'SECONDS') {
+                        sh 'sleep 5'
+                    }
+                }
+            }
+        }
+    }
+    ```
+  - Example of script with **environment variables**
+    ```
+    pipeline {
+        agent any 
+        
+        environment {
+            NAME =  'Jefté'
+            LASTNAME = 'Goes'
+        }
+        
+        stages {
+            stage('Build') { 
+                steps {
+                    sh 'echo $NAME $LASTNAME'
+                }
+            }
+        }
+    }
+    ```
+  - Example of script with **credentials**
+    ```
+    pipeline {
+        agent any 
+        
+        environment {
+            secret = credentials('SECRET_TEXT')
+        }
+        
+        stages {
+            stage('Build') { 
+                steps {
+                    sh 'echo $secret'
+                }
+            }
+        }
+    }
+    ```
+  - Example of script with **post-actions**, in this example the jekins will display failure, because command `exit 1`
+    ```
+    pipeline {
+        agent any 
+        
+        stages {
+            stage('Test') { 
+                steps {
+                    sh 'echo "Fail!"; exit 1'
+                }
+            }
+        }
+        post {
+            always {
+                echo 'I will always get executed :D'
+            }
+            success {
+                echo 'I will only get executed if this success'
+            }
+            failure {
+                echo 'I will only get executed if this fails'
+            }
+            unstable {
+                echo 'I will only get executed if this is unstable'
+            }
+        }
+    }
+    ```
 
 ## Configuration
 - Docker (jenkins/jenkins) / Linux (Debian)
@@ -72,6 +212,8 @@
 - Example every 1 minute: `* * * * *`
 
 
+## Jenkins pipeline
+
 ## Docker compose
 ```
 version: '3'
@@ -89,7 +231,7 @@ networks:
   net:
 ```
 
-## Standalone tests (Execute shell)
+## Standalone tests freestyle project (Execute shell)
 
 ### Test #1
 - Input: `echo hello world`
