@@ -1,3 +1,9 @@
+# What is Jenkins?
+
+- Jenkins is a self-contained, open source automation server which can be used to automate all sorts of tasks such as building, testing, and deploying software.
+
+- Jenkins can be installed through native system packages, Docker, or even run standalone by any machine with the Java Runtime Environment installed.
+
 # CI/CD Definitions
 
 # Initial configuration
@@ -182,7 +188,9 @@
         }
     }
     ```
-
+- MSBuild Plugin
+  - So very hard to install MSbuild/Mono on ubuntu... Xbuild be deprecated, to build applications with .NET Framework
+  
 ## Configuration
 - Docker (jenkins/jenkins) / Linux (Debian)
 
@@ -214,7 +222,7 @@
 
 ## Jenkins pipeline
 
-## Docker compose
+## Docker compose (docker-compose.yml)
 ```
 version: '3'
 services:
@@ -394,4 +402,7 @@ networks:
 # Config email
 
 #
-#
+
+# First scenario (Dockerfile + Jenkins (linux) + Donet Core Directly + Pipeline + Ftp)
+
+# Second scenario (Dockerfile + Jenkins (linux) + Docker + Pipeline + Remotehost (SSH))
