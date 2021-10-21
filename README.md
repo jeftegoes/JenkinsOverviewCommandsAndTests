@@ -47,6 +47,7 @@
 - Git client plugin
 - Git plugin
 - GitHub API
+- Publish Over FTP
 - GitHub plugin
 - Pipeline
   - Example of script **declarative** pipeline
@@ -209,6 +210,7 @@
   echo "BUILD URL IS $BUILD_URL"
   echo "JOB NAME IS $JOB_NAME"
   ```
+
 ### Example custom enviroment variables in Jenkins (Execute shell)
 - To enable > Manage Jenkins > Configure System > Global properties > Mark option Environment variables
   ```
@@ -219,8 +221,6 @@
 ### Jenkins cron (Schedules) https://crontab.guru/
 - Example every 1 minute: `* * * * *`
 
-
-## Jenkins pipeline
 
 ## Docker compose (docker-compose.yml)
 ```
@@ -404,5 +404,53 @@ networks:
 #
 
 # First scenario (Dockerfile + Jenkins (linux) + Donet Core Directly + Pipeline + Ftp)
+```
+pipeline {
+    agent any
+    
+    stages {
+        stage('Clone') {
+            steps {
+                echo "Clone repository..."
+                git(
+                    url: 'https://github.com/jeftegoes/ExampleUnitTestWithXUnit.git',
+                    branch: 'master'
+                )
+            }
+        }
+        stage('Restore packages') {
+            steps {
+                sh 'dotnet restore'
+            }
+        }
+        stage('Clean') {
+            steps {
+                sh 'dotnet clean'
+            }
+        }
+        stage('Build') {
+            steps {
+                sh 'dotnet build'
+            }
+        }
+        stage('Test') {
+            steps {
+                sh 'dotnet test'
+            }
+        }
+        stage('Publish') {
+            steps {
+                sh 'dotnet publish -c Release'
+            }
+        }
+    }
+    
+    post {
+        always {
+            archiveArtifacts artifacts: 'Business/bin/Release/net5.0/publish/*.*', allowEmptyArchive: true
+        }
+    }
+}
+```
 
 # Second scenario (Dockerfile + Jenkins (linux) + Docker + Pipeline + Remotehost (SSH))
