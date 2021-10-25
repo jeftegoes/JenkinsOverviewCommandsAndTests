@@ -7,7 +7,6 @@
 # CI/CD Definitions
 
 # Initial configuration
-
 ## Plugins 
 - Mailer plugin
 - Job DSL https://plugins.jenkins.io/job-dsl/
@@ -272,7 +271,6 @@ networks:
   ```
 
 ## Standalone tests freestyle project (Execute shell)
-
 ### Test #1
 - Input: `echo hello world`
 - Output: Hello world
@@ -396,14 +394,28 @@ networks:
 
 
 
+# Reporting
 
+# Backup
 
-- 
 # Config email
 
-#
+# Working with Jenkins for .Net applications
+## To compile and test the application we has two approches for differrent .Net Frameworks
+- For .Net Framework 4.X we need this tools:
+  - Operational system Windows, for Linux we need to Mono, but is so hard...
+  - .Net Framework
+  - MsBuild
+    - Plugin jenkins https://plugins.jenkins.io/msbuild/
+    - Build engine (Installed in the machine) https://docs.microsoft.com/en-us/visualstudio/msbuild/msbuild?view=vs-2019
+  - Nuget https://www.nuget.org/downloads
+  - NUnit https://nunit.org/download/
+- .Net Core / .net 5
+  - Operational system Windows or Linux
+  - Dotnet cli
 
-# First scenario (Dockerfile + Jenkins (linux) + Donet Core Directly + Pipeline + Ftp)
+
+## First cenario: Dockerfile + Jenkins (linux/docker) + Donet Core Directly + Pipeline + Ftp
 ```
 pipeline {
     agent any
@@ -443,6 +455,16 @@ pipeline {
                 sh 'dotnet publish -c Release'
             }
         }
+        stage('Upload') {
+            steps {
+                ftpPublisher alwaysPublishFromMaster: true,
+                 continueOnError: false,
+                 failOnError: false,
+                 masterNodeName: '',
+                 paramPublish: null,
+                 publishers: [[configName: 'MY_CONFIG_HERE', transfers: [[asciiMode: false, cleanRemote: true, excludes: '', flatten: false, makeEmptyDirs: false, noDefaultExcludes: false, patternSeparator: '[, ]+', remoteDirectory: 'REMOTE_PATH_HERE', remoteDirectorySDF: false, removePrefix: 'Business/bin/Release/net5.0/publish', sourceFiles: 'Business/bin/Release/net5.0/publish/*.*']], usePromotionTimestamp: false, useWorkspaceInPromotion: false, verbose: false]]
+            }
+        }
     }
     
     post {
@@ -453,4 +475,4 @@ pipeline {
 }
 ```
 
-# Second scenario (Dockerfile + Jenkins (linux) + Docker + Pipeline + Remotehost (SSH))
+## Second cenario: Dockerfile + Jenkins (linux/docker) + Docker + Pipeline + Remotehost (SSH)
