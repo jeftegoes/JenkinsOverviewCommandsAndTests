@@ -398,7 +398,23 @@ networks:
 
 # Backup
 
-# Config email
+# Email
+1. Email is really important notification to team!
+2. Creating Freestyle / Pipelines projects
+3. Build + Testing + reporting the projects
+## Config email
+1. Manage Jenkins > Configure System > Jenkins Location
+   1. Jenkins URL = http://XXXXXXXXXXXXXXXXXXX:8080/
+   2. System Admin e-mail address = Notifications
+2. Manage Jenkins > Configure System > E-mail Notification
+3. Configure email with gmail
+   - SMTP server = smtp.gmail.com
+   - SMTP Username = xxxxxxxxx@gmail.com
+   - SMTP Password = $$$$$$$$$$
+   - Use SSL = Unmark SSL
+   - Use TLS = Mark TLS
+   - SMTP port = 587 (Port of the TLS)
+   - Save the configuration
 
 # Working with Jenkins for .Net applications
 ## To compile and test the application we has two approches for differrent .Net Frameworks
