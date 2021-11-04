@@ -393,19 +393,51 @@ networks:
 - Output: If you want to see the name, please mark the show option
 
 
+# Timezone
+1. Manage Jenkins > Manage Users > $User > Configure > User Defined Time Zone
+  - Time Zone = Brazil/East
+
+# Parallel
+
+# Agents
 
 # Reporting
 
 # Backup
 
+# Jenkins Pipeline check-in pipeline in Git
+1. Create a repo into github private or public, with name Jenkinsfile with respective pipeline
+2. Create pipeline job
+3. In section **Pipeline**
+   1. Definition = **Piepline script form SCM**
+   2. SCM = Git
+   3. Repository url = Repo .git here
+   4. Credentials, if repo is private, choice credential with username and password (token) # https://github.blog/2020-12-15-token-authentication-requirements-for-git-operations/ 
+      1. Manage Jenkins > Credentials > Username with password
+
+
 # Email
 1. Email is really important notification to team!
 2. Creating Freestyle / Pipelines projects
 3. Build + Testing + reporting the projects
-## Config email
+
+## Common configuration
 1. Manage Jenkins > Configure System > Jenkins Location
    1. Jenkins URL = http://XXXXXXXXXXXXXXXXXXX:8080/
    2. System Admin e-mail address = Notifications
+
+## Config: E-mail Notification (To pipeline step mail: Mail)
+2. Manage Jenkins > Configure System > E-mail Notification
+3. Configure email with gmail
+   - SMTP server = smtp.gmail.com
+   - SMTP Username = xxxxxxxxx@gmail.com
+   - SMTP Password = $$$$$$$$$$
+   - Use SSL = Unmark SSL
+   - Use TLS = Mark TLS
+   - SMTP port = 587 (Port of the TLS)
+   - Save the configuration
+
+## Config: Extended E-mail Notification (To pipeline step emailext: Extended Email)
 2. Manage Jenkins > Configure System > E-mail Notification
 3. Configure email with gmail
    - SMTP server = smtp.gmail.com
@@ -471,7 +503,12 @@ pipeline {
                 sh 'dotnet publish -c Release'
             }
         }
-        stage('Upload') {
+        stage('Email') {
+            steps {
+                emailext body: '<b>Status: $BUILD_STATUS</b><br>Project: $PROJECT_NAME <br>Build Number: $BUILD_NUMBER <br> URL de build: $BUILD_URL', subject: '$PROJECT_NAME - Build # $BUILD_NUMBER - $BUILD_STATUS!', to: 'jefte.goes@hotmail.com'
+            }
+        }
+        stage('Deploy') {
             steps {
                 ftpPublisher alwaysPublishFromMaster: true,
                  continueOnError: false,
@@ -486,6 +523,13 @@ pipeline {
     post {
         always {
             archiveArtifacts artifacts: 'Business/bin/Release/net5.0/publish/*.*', allowEmptyArchive: true
+        }
+        success {
+            echo 'Success'
+        }
+        failure {
+            echo 'Failure, send email notification...'
+            mail bcc: '', body: "<b>Example</b><br>Project: ${env.JOB_NAME} <br>Build Number: ${env.BUILD_NUMBER} <br> URL de build: ${env.BUILD_URL}", cc: '', charset: 'UTF-8', from: '', mimeType: 'text/html', replyTo: '', subject: "ERROR CI: Project name -> ${env.JOB_NAME}", to: "jefte.goes@hotmail.com";
         }
     }
 }
