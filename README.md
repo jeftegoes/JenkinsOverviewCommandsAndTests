@@ -45,6 +45,7 @@
     ```
 - Git client plugin
 - Git plugin
+- Docker plugin
 - GitHub API
 - Publish Over FTP
 - GitHub plugin
@@ -404,6 +405,11 @@ networks:
 # Reporting
 
 # Backup
+
+# Multibranch pipeline
+- The Multibranch Pipeline project type enables implement different Jenkinsfile for different branches of the same project. In a Multibranch Pipeline project, Jenkins automatically discovers, manages and executes Pipelines for branches which contain a Jenkinsfile in source control.
+
+# Nodes
 
 # Jenkins Pipeline check-in pipeline in Git
 1. Create a repo into github private or public, with name Jenkinsfile with respective pipeline
